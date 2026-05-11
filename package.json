@@ -1,6 +1,6 @@
 {
   "name": "@unscreen/video-background-remover",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "TypeScript SDK for the Unscreen.io API",
   "type": "module",
   "main": "./dist/index.js",

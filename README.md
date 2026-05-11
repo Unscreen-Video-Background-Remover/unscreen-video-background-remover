@@ -1,9 +1,13 @@
-# unscreen.js
+# unscreen SDK
 
-TypeScript SDK for the Unscreen.io API.
+TypeScript SDK for the www.unscreen.io API.
+
+![Uncreen Video Background Remover | www.unscreen.io ](./assets/demo.gif)
+
+Get your API key from [Unscreen API](https://www.unscreen.io/en/api) first, then set it as `UNSCREEN_API_KEY`.
 
 ```ts
-import { Unscreen } from "unscreen.js";
+import { Unscreen } from "@unscreen/video-background-remover";
 
 const unscreen = new Unscreen({
   apiKey: process.env.UNSCREEN_API_KEY,
@@ -36,7 +40,7 @@ await unscreen.jobs.submit({
 Webhook event names are `video.completed` and `video.failed`:
 
 ```ts
-import type { WebhookEvent } from "unscreen.js";
+import type { WebhookEvent } from "@unscreen/video-background-remover";
 
 export async function handleUnscreenWebhook(event: WebhookEvent) {
   if (event.eventType === "video.completed") {
