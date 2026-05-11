@@ -1,6 +1,6 @@
 {
   "name": "@unscreen/video-background-remover",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "TypeScript SDK for the Unscreen.io API",
   "type": "module",
   "main": "./dist/index.js",
@@ -13,10 +13,12 @@
   },
   "files": [
     "dist",
+    "assets/demo.gif",
     "README.md"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
+    "prepack": "npm run build",
     "test": "npm run build:test && node --test dist-test/test/*.test.js",
     "build:test": "tsc -p tsconfig.test.json",
     "typecheck": "tsc -p tsconfig.build.json --noEmit"
