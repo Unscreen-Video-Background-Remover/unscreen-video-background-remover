@@ -2,7 +2,7 @@
 
 TypeScript SDK for the www.unscreen.io API.
 
-![Uncreen Video Background Remover | www.unscreen.io ](./assets/demo.gif)
+![Uncreen Video Background Remover | www.unscreen.io ](https://raw.githubusercontent.com/Unscreen-Video-Background-Remover/unscreen-video-background-remover/main/assets/demo.gif)
 
 Get your API key from [Unscreen API](https://www.unscreen.io/en/api) first, then set it as `UNSCREEN_API_KEY`.
 
