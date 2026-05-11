@@ -2,6 +2,8 @@
 
 TypeScript SDK for the www.unscreen.io API.
 
+Full walkthrough step by step to production ready video background remover SaaS with Node.js: [Remove Video Background with JavaScript](https://www.unscreen.io/en/blog/remove-video-background-with-javascript)
+
 ![Uncreen Video Background Remover | www.unscreen.io ](https://raw.githubusercontent.com/Unscreen-Video-Background-Remover/unscreen-video-background-remover/main/assets/demo.gif)
 
 Get your API key from <a href="https://www.unscreen.io/en/api" target="_blank" rel="noopener noreferrer">Unscreen API</a> first, then set it as `UNSCREEN_API_KEY`.
