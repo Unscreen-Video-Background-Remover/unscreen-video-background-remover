@@ -1,8 +1,8 @@
 {
   "name": "@unscreen/video-background-remover",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "TypeScript SDK for the Unscreen API - Video Background Removal library",
-  "homepage": "https://www.unscreen.io/en/api#api-documentation",
+  "homepage": "https://www.unscreen.io/en/api#sdk",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Unscreen-Video-Background-Remover/unscreen-video-background-remover.git"
