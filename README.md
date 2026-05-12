@@ -2,7 +2,15 @@
 
 TypeScript SDK for the www.unscreen.io API.
 
-Full walkthrough step by step to production ready video background remover SaaS with Node.js: [Remove Video Background with JavaScript](https://www.unscreen.io/en/blog/remove-video-background-with-javascript)
+## License and commercial use
+
+This package is not licensed for SaaS, paid products, client work, production business use, or any other commercial use unless you receive prior written permission from support@rembg.com.
+
+Unauthorized commercial use is prohibited. Using this package in a SaaS product, paid product, hosted service, agency/client project, marketplace integration, revenue-generating workflow, or production business environment without written permission from support@rembg.com is a breach of the license and may constitute copyright infringement.
+
+If you intend to use this package commercially, contact support@rembg.com before integrating, deploying, or distributing it.
+
+Technical walkthrough for building a video background remover with Node.js: [Remove Video Background with JavaScript](https://www.unscreen.io/en/blog/remove-video-background-with-javascript). Commercial SaaS deployment requires prior written permission from support@rembg.com.
 
 ![Uncreen Video Background Remover | www.unscreen.io ](https://raw.githubusercontent.com/Unscreen-Video-Background-Remover/unscreen-video-background-remover/main/assets/demo.gif)
 

@@ -1,7 +1,15 @@
 {
   "name": "@unscreen/video-background-remover",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "TypeScript SDK for the Unscreen.io API",
+  "homepage": "https://github.com/Unscreen-Video-Background-Remover/unscreen-video-background-remover#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Unscreen-Video-Background-Remover/unscreen-video-background-remover.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Unscreen-Video-Background-Remover/unscreen-video-background-remover/issues"
+  },
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -13,7 +21,8 @@
   },
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
@@ -31,7 +40,7 @@
     "sdk",
     "typescript"
   ],
-  "license": "MIT",
+  "license": "SEE LICENSE IN LICENSE",
   "engines": {
     "node": ">=20"
   },
