@@ -2,15 +2,7 @@
 
 TypeScript SDK for the www.unscreen.io API.
 
-## License and commercial use
-
-This package is not licensed for SaaS, paid products, client work, production business use, or any other commercial use unless you receive prior written permission from support@rembg.com.
-
-Unauthorized commercial use is prohibited. Using this package in a SaaS product, paid product, hosted service, agency/client project, marketplace integration, revenue-generating workflow, or production business environment without written permission from support@rembg.com is a breach of the license and may constitute copyright infringement.
-
-If you intend to use this package commercially, contact support@rembg.com before integrating, deploying, or distributing it.
-
-Technical walkthrough for building a video background remover with Node.js: [Remove Video Background with JavaScript](https://www.unscreen.io/en/blog/remove-video-background-with-javascript). Commercial SaaS deployment requires prior written permission from support@rembg.com.
+Technical walkthrough for building a video background remover with Node.js: [Remove Video Background with JavaScript](https://www.unscreen.io/en/blog/remove-video-background-with-javascript).
 
 ![Uncreen Video Background Remover | www.unscreen.io ](https://raw.githubusercontent.com/Unscreen-Video-Background-Remover/unscreen-video-background-remover/main/assets/demo.gif)
 
@@ -73,3 +65,11 @@ await unscreen.removeBackground({
 ```
 
 If `webhookUrl` is provided, `removeBackground` submits and starts the job without waiting unless `wait: true` is explicitly passed.
+
+## License
+
+Users and companies may use this package as-is, including in commercial applications, SaaS products, paid products, internal tools, and client projects.
+
+You may not redistribute, rebrand, white-label, resell, sublicense, republish, fork-and-publish, or copy/extract any part of this software into another SDK, package, product, or service without prior written permission from support@rembg.com.
+
+Unauthorized redistribution, rebranding, resale, sublicensing, republishing, or copying of this software is prohibited, is a material breach of the license, and may constitute copyright infringement.
