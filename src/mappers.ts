@@ -8,6 +8,7 @@ import type {
 type RawJobCreateResponse = {
   job_id: string;
   upload_url: string;
+  mask_upload_url?: string | null;
   status: JobCreateResponse["status"];
   mode: string;
   content_type: string;
@@ -48,6 +49,7 @@ export function mapJobCreateResponse(raw: RawJobCreateResponse): JobCreateRespon
   return {
     jobId: raw.job_id,
     uploadUrl: raw.upload_url,
+    maskUploadUrl: raw.mask_upload_url ?? null,
     status: raw.status,
     mode: raw.mode,
     contentType: raw.content_type,

@@ -62,6 +62,64 @@ describe("Unscreen", () => {
     assert.equal(calls[2]?.init?.method, "POST");
   });
 
+  it("uploads an optional first-frame mask for auto mode before starting the job", async () => {
+    const inputPath = join(tempDir, "input.mp4");
+    const maskPath = join(tempDir, "first-frame-mask.png");
+    await writeFile(inputPath, Buffer.from("video"));
+    await writeFile(maskPath, Buffer.from("mask"));
+
+    const calls: FetchCall[] = [];
+    const fetch = mockFetch(calls, [
+      jsonResponse({
+        job_id: "job_mask",
+        upload_url: "https://upload.example/job_mask/video",
+        mask_upload_url: "https://upload.example/job_mask/mask",
+        status: "uploading",
+        mode: "auto",
+        content_type: "video/mp4",
+      }, 201),
+      new Response(null, { status: 200 }),
+      new Response(null, { status: 200 }),
+      jsonResponse({
+        message: "started",
+        job_id: "job_mask",
+        credits_remaining: 9,
+      }, 202),
+    ]);
+
+    const unscreen = new Unscreen({ apiKey: "test-key", fetch });
+    const job = await unscreen.jobs.submit({ input: inputPath, mode: "auto", mask: maskPath });
+
+    assert.equal(job.jobId, "job_mask");
+    assert.equal(calls.length, 4);
+    assert.equal(calls[1]?.url, "https://upload.example/job_mask/video");
+    assert.equal(new Headers(calls[1]?.init?.headers).get("content-type"), "video/mp4");
+    assert.equal(calls[2]?.url, "https://upload.example/job_mask/mask");
+    assert.equal(calls[2]?.init?.method, "PUT");
+    assert.equal(new Headers(calls[2]?.init?.headers).get("content-type"), "image/png");
+    assert.equal(calls[3]?.url, "https://api.unscreen.ai/api/jobs/job_mask/start");
+  });
+
+  it("throws before creating a job when a mask is used with human_only mode", async () => {
+    const inputPath = join(tempDir, "input.mp4");
+    const maskPath = join(tempDir, "first-frame-mask.png");
+    await writeFile(inputPath, Buffer.from("video"));
+    await writeFile(maskPath, Buffer.from("mask"));
+
+    const calls: FetchCall[] = [];
+    const unscreen = new Unscreen({ apiKey: "test-key", fetch: mockFetch(calls, []) });
+
+    await assert.rejects(
+      () => unscreen.jobs.submit({ input: inputPath, mode: "human_only", mask: maskPath }),
+      (error) => {
+        assert.ok(error instanceof UnscreenError);
+        assert.equal(error.code, "mask_not_supported_for_human_only");
+        return true;
+      },
+    );
+    assert.equal(calls.length, 0);
+  });
+
   it("does not poll when removeBackground is called with a webhook URL", async () => {
     const inputPath = join(tempDir, "input.mov");
     await writeFile(inputPath, Buffer.from("video"));

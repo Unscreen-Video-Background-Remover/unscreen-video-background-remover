@@ -6,6 +6,11 @@ type PreparedInput = {
   contentType: VideoContentType;
 };
 
+type PreparedMaskInput = {
+  body: BodyInit;
+  contentType: "image/png";
+};
+
 const contentTypesByExtension: Record<string, VideoContentType> = {
   ".avi": "video/x-msvideo",
   ".mkv": "video/x-matroska",
@@ -37,6 +42,34 @@ export async function prepareInput(
   return {
     body: input as BodyInit,
     contentType: contentType ?? "video/mp4",
+  };
+}
+
+export async function prepareMaskInput(input: UnscreenInput, fetchImpl: FetchLike): Promise<PreparedMaskInput> {
+  if (typeof input === "string") {
+    if (isHttpUrl(input)) {
+      return prepareRemoteMaskUrl(input, fetchImpl);
+    }
+
+    return prepareLocalMaskPath(input);
+  }
+
+  if (isBlob(input)) {
+    const contentType = normalizeImageContentType(input.type);
+
+    if (input.type && !contentType) {
+      throw new UnscreenError("First-frame mask must be a PNG image.");
+    }
+
+    return {
+      body: input,
+      contentType: "image/png",
+    };
+  }
+
+  return {
+    body: input as BodyInit,
+    contentType: "image/png",
   };
 }
 
@@ -74,6 +107,28 @@ async function prepareRemoteUrl(
   };
 }
 
+async function prepareRemoteMaskUrl(url: string, fetchImpl: FetchLike): Promise<PreparedMaskInput> {
+  const response = await fetchImpl(url);
+
+  if (!response.ok) {
+    throw new UnscreenError(`Failed to fetch mask URL: ${response.status} ${response.statusText}`, {
+      statusCode: response.status,
+    });
+  }
+
+  const responseType = response.headers.get("content-type") ?? undefined;
+  const urlPathname = new URL(url).pathname;
+
+  if (!normalizeImageContentType(responseType) && !hasPngExtension(urlPathname)) {
+    throw new UnscreenError("First-frame mask must be a PNG image.");
+  }
+
+  return {
+    body: await response.blob(),
+    contentType: "image/png",
+  };
+}
+
 async function prepareLocalPath(path: string, contentType?: VideoContentType): Promise<PreparedInput> {
   if (typeof process === "undefined" || !process.versions?.node) {
     throw new UnscreenError("Local file paths are only supported in Node.js.");
@@ -85,6 +140,24 @@ async function prepareLocalPath(path: string, contentType?: VideoContentType): P
   return {
     body: buffer as BodyInit,
     contentType: contentType ?? inferContentTypeFromPath(path) ?? "video/mp4",
+  };
+}
+
+async function prepareLocalMaskPath(path: string): Promise<PreparedMaskInput> {
+  if (typeof process === "undefined" || !process.versions?.node) {
+    throw new UnscreenError("Local file paths are only supported in Node.js.");
+  }
+
+  if (!hasPngExtension(path)) {
+    throw new UnscreenError("First-frame mask must be a PNG image.");
+  }
+
+  const { readFile } = await import("node:fs/promises");
+  const buffer = await readFile(path);
+
+  return {
+    body: buffer as BodyInit,
+    contentType: "image/png",
   };
 }
 
@@ -103,4 +176,16 @@ function normalizeContentType(value?: string): VideoContentType | undefined {
   const mediaType = value.split(";")[0]?.trim().toLowerCase();
 
   return Object.values(contentTypesByExtension).find((candidate) => candidate === mediaType);
+}
+
+function normalizeImageContentType(value?: string): "image/png" | undefined {
+  if (!value) {
+    return undefined;
+  }
+
+  return value.split(";")[0]?.trim().toLowerCase() === "image/png" ? "image/png" : undefined;
+}
+
+function hasPngExtension(path: string): boolean {
+  return path.toLowerCase().endsWith(".png");
 }

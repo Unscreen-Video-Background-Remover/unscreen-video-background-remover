@@ -28,6 +28,7 @@ export type CreateJobOptions = {
 
 export type SubmitJobOptions = CreateJobOptions & {
   input: UnscreenInput;
+  mask?: UnscreenInput;
 };
 
 export type RemoveBackgroundOptions = SubmitJobOptions & {
@@ -40,6 +41,7 @@ export type RemoveBackgroundOptions = SubmitJobOptions & {
 export type JobCreateResponse = {
   jobId: string;
   uploadUrl: string;
+  maskUploadUrl: string | null;
   status: JobStatusName;
   mode: string;
   contentType: string;

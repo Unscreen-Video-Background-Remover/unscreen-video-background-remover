@@ -1,6 +1,6 @@
 import { ApiClient } from "./client.js";
 import { UnscreenError, UnscreenTimeoutError } from "./errors.js";
-import { prepareInput } from "./input.js";
+import { prepareInput, prepareMaskInput } from "./input.js";
 import {
   mapJobCreateResponse,
   mapJobListResponse,
@@ -50,13 +50,28 @@ export class JobsResource {
   async upload(job: JobCreateResponse, input: SubmitJobOptions["input"]): Promise<void> {
     const prepared = await prepareInput(input, this.client.fetch, job.contentType as SubmitJobOptions["contentType"]);
 
-    await this.uploadPrepared(job.uploadUrl, prepared.body, prepared.contentType);
+    await this.uploadPrepared(job.uploadUrl, prepared.body, prepared.contentType, "video");
+  }
+
+  async uploadMask(job: JobCreateResponse, mask: NonNullable<SubmitJobOptions["mask"]>): Promise<void> {
+    assertMaskIsAllowed(job.mode);
+
+    if (!job.maskUploadUrl) {
+      throw new UnscreenError("The API did not return a first-frame mask upload URL.", {
+        code: "mask_upload_url_missing",
+      });
+    }
+
+    const prepared = await prepareMaskInput(mask, this.client.fetch);
+
+    await this.uploadPrepared(job.maskUploadUrl, prepared.body, prepared.contentType, "first-frame mask");
   }
 
   private async uploadPrepared(
     uploadUrl: string,
     body: BodyInit,
-    contentType: NonNullable<SubmitJobOptions["contentType"]>,
+    contentType: string,
+    label: string,
   ): Promise<void> {
     const response = await this.client.fetch(uploadUrl, {
       method: "PUT",
@@ -67,7 +82,7 @@ export class JobsResource {
     });
 
     if (!response.ok) {
-      throw new UnscreenError(`Failed to upload video: ${response.status} ${response.statusText}`, {
+      throw new UnscreenError(`Failed to upload ${label}: ${response.status} ${response.statusText}`, {
         statusCode: response.status,
       });
     }
@@ -85,6 +100,10 @@ export class JobsResource {
   }
 
   async submit(options: SubmitJobOptions): Promise<JobStartResponse> {
+    if (options.mask !== undefined) {
+      assertMaskIsAllowed(options.mode ?? "auto");
+    }
+
     const prepared = await prepareInput(options.input, this.client.fetch, options.contentType);
     const job = await this.create({
       mode: options.mode,
@@ -92,7 +111,11 @@ export class JobsResource {
       webhookUrl: options.webhookUrl,
     });
 
-    await this.uploadPrepared(job.uploadUrl, prepared.body, prepared.contentType);
+    await this.uploadPrepared(job.uploadUrl, prepared.body, prepared.contentType, "video");
+
+    if (options.mask !== undefined) {
+      await this.uploadMask(job, options.mask);
+    }
 
     return this.start(job.jobId);
   }
@@ -209,6 +232,14 @@ function getAssetUrl(job: JobStatus, asset: DownloadAsset): string | null {
       return job.outputVideoUrl;
     case "previewImage":
       return job.previewImageUrl;
+  }
+}
+
+function assertMaskIsAllowed(mode?: string): void {
+  if (mode === "human_only") {
+    throw new UnscreenError("First-frame masks are only supported in auto mode. Remove mask or use mode: \"auto\".", {
+      code: "mask_not_supported_for_human_only",
+    });
   }
 }
 
